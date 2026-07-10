@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-body bg-panel-muted text-ink antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display m-0 text-ink;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition active:translate-y-px;
+  }
+  .btn-gold {
+    @apply bg-gradient-to-b from-[#d8b45c] to-gold-deep text-ink hover:shadow-[0_8px_18px_rgba(168,132,47,0.35)];
+  }
+  .btn-outline {
+    @apply border border-line text-ink hover:border-gold-deep hover:text-gold-deep bg-transparent;
+  }
+}
