@@ -43,7 +43,7 @@ const AdminProperties = () => {
               <td>Nairobi</td>
               <td>$850,000</td>
               <td>Active</td>
-              <td>Edit | Delete</td>
+              <td className="p-4 space-x-2"><button className="bg-blue-500 text-white px-4 py-2 rounded">Edit</button> <button className="bg-red-500 text-white px-4 py-2 rounded">Delete</button></td>
             </tr>
 
             <tr className="text-center">
@@ -51,7 +51,7 @@ const AdminProperties = () => {
               <td>Mombasa</td>
               <td>$320,000</td>
               <td>Inactive</td>
-              <td>Edit | Delete</td>
+              <td className="p-4 space-x-2"><button className="bg-blue-500 text-white px-4 py-2 rounded">Edit</button> <button className="bg-red-500 text-white px-4 py-2 rounded">Delete</button></td>
             </tr>
 
           </tbody>

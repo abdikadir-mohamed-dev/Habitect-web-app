@@ -1,6 +1,8 @@
+import AdminSidebar from "../components/AdminSidebar";
 const EditProperty = () => {
   return (
     <div className="flex bg-gray-100 min-h-screen">
+      <AdminSidebar />
       <div className="flex-1 p-8">
         <h1 className="text-3xl font-bold mb-8">Edit Property</h1>
         <h3>Update Property Details</h3>
