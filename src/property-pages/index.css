@@ -1,24 +1,22 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  body {
-    @apply font-body bg-panel-muted text-ink antialiased;
-  }
-  h1, h2, h3, h4 {
-    @apply font-display m-0 text-ink;
-  }
-}
+@theme {
+  --color-ink: #1c1a16;
+  --color-ink-soft: #6b675f;
+  --color-line: #e8e3d8;
+  --color-panel: #ffffff;
+  --color-panel-muted: #f6f4ef;
+  --color-bg: #100e0b;
+  --color-gold: #c9a24a;
+  --color-gold-deep: #a8842f;
+  --color-gold-tint: #f1e6c9;
 
-@layer components {
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition active:translate-y-px;
-  }
-  .btn-gold {
-    @apply bg-gradient-to-b from-[#d8b45c] to-gold-deep text-ink hover:shadow-[0_8px_18px_rgba(168,132,47,0.35)];
-  }
-  .btn-outline {
-    @apply border border-line text-ink hover:border-gold-deep hover:text-gold-deep bg-transparent;
-  }
+  --font-display: "Fraunces", serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --radius-md2: 10px;
+  --radius-lg2: 16px;
+
+  --shadow-card: 0 12px 30px rgba(20, 16, 8, 0.08);
+  --shadow-card-hover: 0 20px 40px rgba(20, 16, 8, 0.14);
 }
