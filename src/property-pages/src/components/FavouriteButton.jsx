@@ -1,5 +1,10 @@
 import { useFavorites } from "../context/FavoritesContext";
-import "./FavoriteButton.css";
+
+const sizeClasses = {
+  sm: "w-8 h-8 [&>svg]:w-4 [&>svg]:h-4",
+  md: "w-10 h-10 [&>svg]:w-5 [&>svg]:h-5",
+  lg: "w-12 h-12 [&>svg]:w-6 [&>svg]:h-6",
+};
 
 export default function FavoriteButton({ propertyId, size = "md" }) {
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -8,7 +13,6 @@ export default function FavoriteButton({ propertyId, size = "md" }) {
   return (
     <button
       type="button"
-      className={`favorite-btn favorite-btn--${size} ${active ? "is-active" : ""}`}
       aria-pressed={active}
       aria-label={active ? "Remove from saved properties" : "Save this property"}
       onClick={(e) => {
@@ -16,6 +20,9 @@ export default function FavoriteButton({ propertyId, size = "md" }) {
         e.stopPropagation();
         toggleFavorite(propertyId);
       }}
+      className={`inline-flex items-center justify-center rounded-full bg-white/95 shadow-[0_4px_12px_rgba(20,16,8,0.15)] transition-transform hover:scale-105 ${
+        active ? "text-gold" : "text-ink"
+      } ${sizeClasses[size]}`}
     >
       <svg viewBox="0 0 24 24" fill={active ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8">
         <path
