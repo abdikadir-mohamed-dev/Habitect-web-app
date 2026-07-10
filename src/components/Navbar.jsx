@@ -1,23 +1,58 @@
 import { Link, NavLink } from "react-router-dom";
 
-// NOTE: This is a lightweight placeholder so Part B pages can be previewed
-// standalone. Swap this out for whatever Part A ships.
-export default function Navbar() {
-  const linkClass = ({ isActive }) =>
-    `transition-colors ${isActive ? "text-gold" : "text-white/75 hover:text-gold"}`;
-
+const Navbar = () => {
   return (
-    <header className="bg-bg text-white">
-      <div className="container max-w-[1240px] mx-auto px-6 h-16 flex items-center justify-between">
-        <Link to="/" className="font-display font-semibold text-xl text-gold">
-          Habitect
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+
+        {/* Logo */}
+        <Link to="/" className="text-2xl font-bold text-amber-600">
+          HABITECT
         </Link>
-        <nav className="flex gap-6 text-sm">
-          <NavLink to="/" end className={linkClass}>Home</NavLink>
-          <NavLink to="/properties" className={linkClass}>Properties</NavLink>
-          <NavLink to="/saved-properties" className={linkClass}>Saved</NavLink>
+
+        {/* Navigation */}
+        <nav className="hidden md:flex gap-8 font-medium">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? "text-amber-600" : "text-gray-700 hover:text-amber-600"
+            }
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/about"
+            className={({ isActive }) =>
+              isActive ? "text-amber-600" : "text-gray-700 hover:text-amber-600"
+            }
+          >
+            About
+          </NavLink>
+
+          <NavLink
+            to="/contact"
+            className={({ isActive }) =>
+              isActive ? "text-amber-600" : "text-gray-700 hover:text-amber-600"
+            }
+          >
+            Contact
+          </NavLink>
         </nav>
+
+        {/* Login Button */}
+        <Link
+
+  to="/admin/dashboard"
+
+  className="bg-orange-500 text-white px-5 py-2 rounded">
+  Login
+
+</Link>
+
       </div>
     </header>
   );
-}
+};
+
+export default Navbar;
