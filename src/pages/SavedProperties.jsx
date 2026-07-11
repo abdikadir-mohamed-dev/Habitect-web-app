@@ -1,13 +1,14 @@
-import { properties } from "../data/properties";
+import { useProperties } from "../context/PropertiesContext";
 import { useFavorites } from "../context/FavoritesContext";
 import PropertyGrid from "../components/PropertyGrid";
 
 export default function SavedProperties() {
+  const { properties } = useProperties();
   const { favoriteIds } = useFavorites();
 
-const savedProperties = properties.filter((property) =>
-  favoriteIds.includes(property.id)
-);
+  const savedProperties = properties.filter((property) =>
+    favoriteIds.includes(property.id)
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">

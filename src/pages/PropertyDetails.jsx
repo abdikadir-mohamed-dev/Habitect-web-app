@@ -1,9 +1,13 @@
 import { useParams } from "react-router-dom";
-import { getPropertyById, formatPrice } from "../data/properties";
+import { useProperties } from "../context/PropertiesContext";
+import { formatPrice } from "../data/properties";
 
 function PropertyDetails() {
   const { id } = useParams();
-  const property = getPropertyById(id);
+
+  const { getProperty } = useProperties();
+
+  const property = getProperty(id);
 
   if (!property) {
     return (
@@ -31,7 +35,7 @@ function PropertyDetails() {
       </p>
 
       <p className="mt-4 text-gray-600">
-        {property.address}, {property.city}, {property.state}
+        {property.city}, {property.state}
       </p>
 
       <div className="flex gap-6 mt-6">

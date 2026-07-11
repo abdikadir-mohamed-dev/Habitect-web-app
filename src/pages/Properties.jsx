@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
-import { properties } from "../data/properties";
+import { useProperties } from "../context/PropertiesContext";
 import PropertyGrid from "../components/PropertyGrid";
 
 function Properties() {
+  const { properties } = useProperties();
+
   return (
     <section className="max-w-7xl mx-auto px-6 py-16">
 
@@ -18,6 +20,7 @@ function Properties() {
       </div>
 
       <PropertyGrid properties={properties} />
+
     </section>
   );
 }
