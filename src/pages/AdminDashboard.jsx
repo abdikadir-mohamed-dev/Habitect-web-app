@@ -1,7 +1,7 @@
  import AdminSidebar from "../components/AdminSidebar";
 import { useProperties } from "../context/PropertiesContext";
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const { properties } = useProperties();
 
   return (
@@ -63,4 +63,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

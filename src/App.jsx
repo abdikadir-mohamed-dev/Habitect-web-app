@@ -11,7 +11,7 @@ import AdminProperties from "./pages/AdminProperties";
 import AddProperty from "./pages/AddProperty";
 import EditProperty from "./pages/EditProperty";
 import ManageUsers from "./pages/ManageUsers";
-import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import Properties from "./pages/Properties";
 import PropertyDetails from "./pages/PropertyDetails";
 import SavedProperties from "./pages/SavedProperties";
@@ -32,7 +32,7 @@ function App() {
          </Route>
 
         {/* Admin Routes */}
-        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/properties" element={<AdminProperties />} />
         <Route path="/admin/properties/new" element={<AddProperty />} />
         <Route path="/admin/properties/edit/:id" element={<EditProperty />} />
