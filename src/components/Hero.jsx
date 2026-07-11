@@ -1,6 +1,6 @@
 import Button from "./Button";
 import SearchBar from "./SearchBar";
-
+import { Link } from "react-router-dom";
 const Hero = () => {
   return (
     <>
@@ -29,7 +29,9 @@ const Hero = () => {
             </p>
 
             <div className="mt-8">
-              <Button>Explore Properties</Button>
+              <Link to="/properties"className="bg-orange-500 text-white px-6 py-3 rounded-lg">
+                Explore Properties
+               </Link>
             </div>
           </div>
         </div>

@@ -12,6 +12,9 @@ import AddProperty from "./pages/AddProperty";
 import EditProperty from "./pages/EditProperty";
 import ManageUsers from "./pages/ManageUsers";
 import Dashboard from "./pages/Dashboard";
+import Properties from "./pages/Properties";
+import PropertyDetails from "./pages/PropertyDetails";
+import SavedProperties from "./pages/SavedProperties";
 
 function App() {
   return (
@@ -23,7 +26,10 @@ function App() {
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
-        </Route>
+          <Route path="properties" element={<Properties />} />
+          <Route path="properties/:id" element={<PropertyDetails />} />
+          <Route path="saved-properties" element={<SavedProperties />} />
+         </Route>
 
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<Dashboard />} />
