@@ -18,9 +18,55 @@ export default function RegisterForm() {
       alert("Passwords do not match!");
       return;
     }
+    const users = JSON.parse(localStorage.getItem("users"));
+
+if (!users) {
+  localStorage.setItem(
+    "users",
+    JSON.stringify([
+      {
+        id: 1,
+        name: "Administrator",
+        email: "admin@habitect.com",
+        password: "admin123",
+        phone: "",
+        role: "Admin",
+        status: "Active",
+        memberSince: "2026",
+      },
+    ])
+  );
+}
 
     // TODO: replace with a real fetch() call once the Flask backend is wired up
     if (name && email && phone && password) {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+ 
+
+  const newUser = {
+
+    id: Date.now(),
+
+    name,
+
+    email,
+
+    phone,
+
+    password,
+
+    role: "User",
+
+    status: "Active",
+
+    memberSince: new Date().toLocaleDateString(),
+
+  };
+
+  users.push(newUser);
+
+  localStorage.setItem("users", JSON.stringify(users));
       navigate('/login');
     }
   };

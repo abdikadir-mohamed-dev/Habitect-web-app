@@ -10,31 +10,31 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLoginSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
+
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+
+  const user = users.find(
+    (u) => u.email === email && u.password === password
+  );
+
+  if (!user) {
+    alert("Invalid email or password");
+    return;
+  }
+
+  localStorage.setItem("loggedUser", JSON.stringify(user));
+
+  if (user.role === "Admin") {
+    navigate("/admin/dashboard");
+  } else {
+    navigate("/dashboard");
+  }
+};
 
     // we will replace with a real fetch() call once the Flask backend is wired up
-    if (email && password) {
-      localStorage.setItem(
-
-      "loggedUser",
-
-      JSON.stringify({
-
-        name: email.split("@")[0],
-
-        email: email,
-
-        phone: "",
-
-        memberSince: new Date().toLocaleDateString(),
-
-      })
-
-    );
-      navigate('/dashboard');
-    }
-  };
-
+    
+      
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">

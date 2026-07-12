@@ -3,6 +3,8 @@ import { useProperties } from "../context/PropertiesContext";
 
 const AdminDashboard = () => {
   const { properties } = useProperties();
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  const appointments = JSON.parse(localStorage.getItem("appointments")) || [];
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
@@ -24,12 +26,16 @@ const AdminDashboard = () => {
 
           <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-gray-500">Users</h2>
-            <p className="text-3xl font-bold text-orange-500">85</p>
+            <p className="text-3xl font-bold text-orange-500">
+              {users.length}
+            </p>
           </div>
 
           <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-gray-500">Appointments</h2>
-            <p className="text-3xl font-bold text-orange-500">32</p>
+            <p className="text-3xl font-bold text-orange-500">
+              {appointments.length}
+            </p>
           </div>
 
           <div className="bg-white shadow rounded-lg p-6">
