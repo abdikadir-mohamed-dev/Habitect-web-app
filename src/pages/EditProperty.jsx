@@ -15,6 +15,7 @@ const EditProperty = () => {
     state: "",
     price: "",
     type: "",
+    status: "For Sale",
     beds: "",
     baths: "",
     sqft: "",
@@ -32,6 +33,7 @@ const EditProperty = () => {
         state: property.state || "",
         price: property.price || "",
         type: property.type || "",
+        status: property.status || "For Sale",
         beds: property.beds || "",
         baths: property.baths || "",
         sqft: property.sqft || "",
@@ -58,11 +60,11 @@ const EditProperty = () => {
       state: form.state,
       price: Number(form.price),
       type: form.type,
+      status: form.status,
       beds: Number(form.beds),
       baths: Number(form.baths),
       sqft: Number(form.sqft),
       description: form.description,
-      status: "For Sale",
       featured: false,
       images: [form.image],
     });
@@ -122,6 +124,15 @@ const EditProperty = () => {
             className="border p-3 rounded"
             placeholder="Property Type"
           />
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            className="border p-3 rounded"
+          >
+            <option value="For Sale">For Sale</option>
+            <option value="For Rent">For Rent</option>
+          </select>
 
           <input
             name="beds"

@@ -13,6 +13,7 @@ const AddProperty = () => {
     state: "",
     price: "",
     type: "",
+    status: "For Sale",
     beds: "",
     baths: "",
     sqft: "",
@@ -105,6 +106,15 @@ const AddProperty = () => {
             className="border p-3 rounded"
             onChange={handleChange}
           />
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            className="border p-3 rounded"
+          >
+            <option value="For Sale">For Sale</option>
+            <option value="For Rent">For Rent</option>
+          </select>
 
           <input
             name="beds"

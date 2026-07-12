@@ -1,6 +1,8 @@
-import Button from "./Button";
+import { useNavigate } from "react-router-dom";
 
 const CTA = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="bg-amber-600 py-20">
       <div className="max-w-5xl mx-auto text-center px-6">
@@ -14,9 +16,12 @@ const CTA = () => {
         </p>
 
         <div className="mt-8">
-             <button className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-black transition">
-                Get Started
-           </button>
+          <button
+            onClick={() => navigate("/choose-role")}
+            className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-black transition"
+          >
+            Get Started
+          </button>
         </div>
 
       </div>

@@ -14,6 +14,23 @@ export default function Login() {
 
     // we will replace with a real fetch() call once the Flask backend is wired up
     if (email && password) {
+      localStorage.setItem(
+
+      "loggedUser",
+
+      JSON.stringify({
+
+        name: email.split("@")[0],
+
+        email: email,
+
+        phone: "",
+
+        memberSince: new Date().toLocaleDateString(),
+
+      })
+
+    );
       navigate('/dashboard');
     }
   };

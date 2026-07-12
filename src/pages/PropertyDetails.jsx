@@ -1,13 +1,38 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useProperties } from "../context/PropertiesContext";
 import { formatPrice } from "../data/properties";
 
 function PropertyDetails() {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const { getProperty } = useProperties();
 
   const property = getProperty(id);
+  const handleBookViewing = () => {
+  const appointments =
+    JSON.parse(localStorage.getItem("appointments")) || [];
+
+  const newAppointment = {
+    id: Date.now(),
+    propertyTitle: property.title,
+    location: `${property.city}, ${property.state}`,
+    price: formatPrice(property),
+    date: new Date().toLocaleDateString(),
+    time: "To be confirmed",
+    status: "Pending",
+  };
+
+  appointments.push(newAppointment);
+
+  localStorage.setItem(
+    "appointments",
+    JSON.stringify(appointments)
+  );
+
+  
+
+  navigate("/dashboard");
+};
 
   if (!property) {
     return (
@@ -47,6 +72,14 @@ function PropertyDetails() {
       <p className="mt-8 text-gray-700 leading-8">
         {property.description}
       </p>
+      <div className="mt-10">
+  <button
+    onClick={handleBookViewing}
+    className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold"
+  >
+    Book Viewing
+  </button>
+</div>
 
     </section>
   );

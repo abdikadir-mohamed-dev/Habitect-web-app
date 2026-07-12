@@ -1,167 +1,321 @@
-import React, { useState } from 'react';
-import AppointmentCard from '../components/AppointmentCard';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+import { useProperties } from "../context/PropertiesContext";
+import { useFavorites } from "../context/FavoritesContext";
 
-  const [user, setUser] = useState({
-    name: "Sarah K.",
-    email: "sarah.k@luxuryhomes.com",
-    phone: "+254 712 345 678",
-    avatar: "SK",
-    memberSince: "June 2026"
-  });
+import PropertyGrid from "../components/PropertyGrid";
+import AppointmentCard from "../components/AppointmentCard";
 
-  const [appointments, setAppointments] = useState([
-    {
-      id: "APT-9921",
-      propertyTitle: "The Obsidian Penthouse",
-      location: "Westlands, Nairobi",
-      price: "$1,250,000",
-      date: "July 18, 2026",
-      time: "10:30 AM",
-      status: "Confirmed"
-    },
-    {
-      id: "APT-4412",
-      propertyTitle: "Migaa Golf Estate Villa",
-      location: "Kiambu, Kenya",
-      price: "$850,000",
-      date: "July 24, 2026",
-      time: "02:15 PM",
-      status: "Pending Approval"
-    }
-  ]);
+export default function UserDashboard() {
+  const navigate = useNavigate();
 
-  const handleCancelAppointment = (id) => {
-    if (window.confirm("Are you sure you want to cancel this property tour?")) {
-      setAppointments(appointments.filter(app => app.id !== id));
-    }
+  const { properties } = useProperties();
+  const { favoriteIds } = useFavorites();
+
+  // Logged in user
+  const loggedUser = JSON.parse(localStorage.getItem("loggedUser")) || {
+    name: "Guest User",
+    email: "guest@example.com",
+    phone: "Not provided",
+    memberSince: new Date().toLocaleDateString(),
   };
 
-  return (
-    <div className="flex min-h-screen bg-slate-50/50 text-slate-900 font-sans">
+  const [activeTab, setActiveTab] = useState("overview");
 
-      <div className="w-64 bg-slate-950 p-5 flex flex-col justify-between text-slate-400 shrink-0">
-        <div className="space-y-8">
-          <div className="flex items-center gap-2 px-2">
-            <span className="text-xl font-black text-white tracking-widest">HABITECT</span>
-            <span className="text-[10px] bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded">CLIENT</span>
+  const [appointments, setAppointments] = useState(() => {
+    return JSON.parse(localStorage.getItem("appointments")) || [];
+  });
+
+  const handleCancelAppointment = (id) => {
+    
+      const updatedAppointments = appointments.filter(
+        (appointment) => appointment.id !== id
+      );
+
+      setAppointments(updatedAppointments);
+
+      localStorage.setItem(
+        "appointments",
+        JSON.stringify(updatedAppointments)
+      );
+    
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("loggedUser");
+    navigate("/");
+  };
+
+  const savedProperties = properties.filter((property) =>
+    favoriteIds.includes(property.id)
+  );
+
+  return (
+    <div className="min-h-screen flex bg-slate-100">
+
+      {/* Sidebar */}
+
+      <aside className="w-64 bg-slate-950 text-white flex flex-col justify-between p-6">
+
+        <div>
+
+          <h1 className="text-3xl font-bold mb-10">
+            HABITECT
+          </h1>
+
+          <div className="space-y-2">
+
+            <button
+              onClick={() => setActiveTab("overview")}
+              className={`w-full text-left p-3 rounded-lg ${
+                activeTab === "overview"
+                  ? "bg-orange-500"
+                  : "hover:bg-slate-800"
+              }`}
+            >
+              Dashboard
+            </button>
+
+            <button
+              onClick={() => setActiveTab("properties")}
+              className={`w-full text-left p-3 rounded-lg ${
+                activeTab === "properties"
+                  ? "bg-orange-500"
+                  : "hover:bg-slate-800"
+              }`}
+            >
+              Explore Properties
+            </button>
+
+            <button
+              onClick={() => setActiveTab("saved")}
+              className={`w-full text-left p-3 rounded-lg ${
+                activeTab === "saved"
+                  ? "bg-orange-500"
+                  : "hover:bg-slate-800"
+              }`}
+            >
+              Saved Properties
+            </button>
+
+            <button
+              onClick={() => setActiveTab("appointments")}
+              className={`w-full text-left p-3 rounded-lg ${
+                activeTab === "appointments"
+                  ? "bg-orange-500"
+                  : "hover:bg-slate-800"
+              }`}
+            >
+              My Appointments
+            </button>
+
+            <button
+              onClick={() => setActiveTab("profile")}
+              className={`w-full text-left p-3 rounded-lg ${
+                activeTab === "profile"
+                  ? "bg-orange-500"
+                  : "hover:bg-slate-800"
+              }`}
+            >
+              Profile
+            </button>
+
           </div>
 
-          <nav className="space-y-1.5">
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`w-full text-left px-4 py-3 rounded-xl font-semibold text-sm transition ${activeTab === 'overview' ? 'bg-slate-900 text-white' : 'hover:bg-slate-900/40 hover:text-slate-200'}`}
-            >
-              📊 Overview Panel
-            </button>
-            <button
-              onClick={() => setActiveTab('appointments')}
-              className={`w-full text-left px-4 py-3 rounded-xl font-semibold text-sm transition ${activeTab === 'appointments' ? 'bg-slate-900 text-white' : 'hover:bg-slate-900/40 hover:text-slate-200'}`}
-            >
-              📅 My Appointments ({appointments.length})
-            </button>
-          </nav>
         </div>
 
         <button
-          onClick={() => setActiveTab('profile')}
-          className={`flex items-center gap-3 p-3 rounded-xl text-left border transition w-full ${
-            activeTab === 'profile' ? 'bg-slate-900 border-slate-800 text-white' : 'border-transparent bg-slate-900/20 hover:bg-slate-900 text-slate-300'
-          }`}
+          onClick={handleLogout}
+          className="bg-red-600 hover:bg-red-700 rounded-lg py-3 font-semibold transition"
         >
-          <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-white text-sm tracking-wide">
-            {user.avatar}
-          </div>
-          <div className="overflow-hidden flex-1">
-            <h4 className="font-bold text-sm truncate text-slate-100">{user.name}</h4>
-            <p className="text-[11px] text-slate-500 font-medium truncate">Manage Account</p>
-          </div>
+          Logout
         </button>
-      </div>
 
-      <div className="flex-1 p-8 lg:p-12 overflow-y-auto">
+      </aside>
 
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-black text-slate-950 tracking-tight">Welcome back, {user.name.split(' ')[0]}</h1>
-              <p className="text-slate-500 text-sm mt-1">Here is a summary of your active luxury listings tracking metrics.</p>
+      {/* Main Content */}
+
+      <main className="flex-1 p-10">
+        {/* Dashboard */}
+        {activeTab === "overview" && (
+          <>
+            <h1 className="text-3xl font-bold">
+              Welcome back, {loggedUser.name}
+            </h1>
+
+            <p className="text-slate-500 mt-2">
+              Here's a summary of your account.
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-6 mt-8">
+
+              <div className="bg-white rounded-xl shadow p-6">
+                <h3 className="text-slate-500">Available Properties</h3>
+                <p className="text-4xl font-bold mt-3">
+                  {properties.length}
+                </p>
+              </div>
+
+              <div className="bg-white rounded-xl shadow p-6">
+                <h3 className="text-slate-500">Saved Properties</h3>
+                <p className="text-4xl font-bold mt-3">
+                  {savedProperties.length}
+                </p>
+              </div>
+
+              <div className="bg-white rounded-xl shadow p-6">
+                <h3 className="text-slate-500">Appointments</h3>
+                <p className="text-4xl font-bold mt-3">
+                  {appointments.length}
+                </p>
+              </div>
+
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <span className="text-slate-400 font-bold text-xs uppercase tracking-wider">Booked Viewings</span>
-                <p className="text-3xl font-black text-slate-950 mt-2">{appointments.length}</p>
-              </div>
-              <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <span className="text-slate-400 font-bold text-xs uppercase tracking-wider">Saved Collections</span>
-                <p className="text-3xl font-black text-slate-950 mt-2">4 Properties</p>
-              </div>
-              <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <span className="text-slate-400 font-bold text-xs uppercase tracking-wider">Account Class</span>
-                <p className="text-3xl font-black text-amber-600 mt-2">Premium</p>
-              </div>
-            </div>
-          </div>
+          </>
         )}
 
-        {activeTab === 'appointments' && (
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-black text-slate-950 tracking-tight">Your Scheduled Property Tours</h1>
-              <p className="text-slate-500 text-sm mt-1">Present this dashboard information to the listing agent during physical viewings.</p>
+        {/* Explore Properties */}
+        {activeTab === "properties" && (
+          <>
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold">
+                Explore Properties
+              </h1>
+
+              <span className="text-slate-500">
+                {properties.length} Properties
+              </span>
             </div>
 
-            <div className="space-y-4">
-              {appointments.length > 0 ? (
-                appointments.map(app => (
+            <PropertyGrid properties={properties} />
+          </>
+        )}
+
+        {/* Saved Properties */}
+        {activeTab === "saved" && (
+          <>
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold">
+                Saved Properties
+              </h1>
+
+              <span className="text-slate-500">
+                {savedProperties.length} Saved
+              </span>
+            </div>
+
+            {savedProperties.length > 0 ? (
+              <PropertyGrid properties={savedProperties} />
+            ) : (
+              <div className="bg-white rounded-xl shadow p-10 text-center">
+                <h2 className="text-2xl font-semibold">
+                  No Saved Properties
+                </h2>
+
+                <p className="text-slate-500 mt-3">
+                  Click the ❤️ icon on any property to save it.
+                </p>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Appointments */}
+        {activeTab === "appointments" && (
+          <>
+            <h1 className="text-3xl font-bold mb-8">
+              My Appointments
+            </h1>
+
+            {appointments.length > 0 ? (
+              <div className="space-y-5">
+                {appointments.map((appointment) => (
                   <AppointmentCard
-                    key={app.id}
-                    appointment={app}
+                    key={appointment.id}
+                    appointment={appointment}
                     onCancel={handleCancelAppointment}
                   />
-                ))
-              ) : (
-                <div className="bg-white text-center p-12 rounded-2xl border border-slate-100 text-slate-400 font-medium">
-                  No active property tours scheduled. Explore listings to book a viewing.
-                </div>
-              )}
-            </div>
-          </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow p-10 text-center">
+                <h2 className="text-2xl font-semibold">
+                  No Appointments
+                </h2>
+
+                <p className="text-slate-500 mt-3">
+                  Book a property viewing to see your appointments here.
+                </p>
+              </div>
+            )}
+          </>
         )}
 
-        {activeTab === 'profile' && (
-          <div className="max-w-2xl bg-white p-8 rounded-2xl border border-slate-100 shadow-sm space-y-8">
-            <div>
-              <h1 className="text-2xl font-black text-slate-950 tracking-tight">Account Settings</h1>
-              <p className="text-slate-500 text-sm mt-1">Review your verified membership profiles and platform variables.</p>
-            </div>
+        {/* Profile */}
+        {activeTab === "profile" && (
+          <div className="bg-white rounded-xl shadow p-8 max-w-2xl">
 
-            <div className="space-y-5 text-sm">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Full Name</label>
-                  <input type="text" className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-semibold focus:outline-none" value={user.name} readOnly />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Phone Number</label>
-                  <input type="text" className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-semibold focus:outline-none" value={user.phone} readOnly />
-                </div>
-              </div>
+            <h1 className="text-3xl font-bold mb-8">
+              My Profile
+            </h1>
+
+            <div className="space-y-5">
+
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Registered Email Address</label>
-                <input type="text" className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-semibold focus:outline-none" value={user.email} readOnly />
+                <label className="font-semibold block mb-2">
+                  Full Name
+                </label>
+
+                <input
+                  value={loggedUser.name}
+                  readOnly
+                  className="w-full border rounded-lg p-3 bg-slate-50"
+                />
               </div>
-              <div className="pt-4 border-t border-slate-100 text-xs text-slate-400 font-medium">
-                Registered Premium Member Since: {user.memberSince}
+
+              <div>
+                <label className="font-semibold block mb-2">
+                  Email Address
+                </label>
+
+                <input
+                  value={loggedUser.email}
+                  readOnly
+                  className="w-full border rounded-lg p-3 bg-slate-50"
+                />
               </div>
+
+              <div>
+                <label className="font-semibold block mb-2">
+                  Phone Number
+                </label>
+
+                <input
+                  value={loggedUser.phone || "Not Added"}
+                  readOnly
+                  className="w-full border rounded-lg p-3 bg-slate-50"
+                />
+              </div>
+
+              <div>
+                <label className="font-semibold block mb-2">
+                  Member Since
+                </label>
+
+                <input
+                  value={loggedUser.memberSince || "New Member"}
+                  readOnly
+                  className="w-full border rounded-lg p-3 bg-slate-50"
+                />
+              </div>
+
             </div>
           </div>
         )}
 
-      </div>
+      </main>
     </div>
   );
 }
+      

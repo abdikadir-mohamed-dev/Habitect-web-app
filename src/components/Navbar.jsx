@@ -43,7 +43,7 @@ const Navbar = () => {
         {/* Login Button */}
         <Link
 
-  to="/admin/dashboard"
+  to="/choose-role"
 
   className="bg-orange-500 text-white px-5 py-2 rounded">
   Login
