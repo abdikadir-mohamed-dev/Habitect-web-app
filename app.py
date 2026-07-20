@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
-from flassk import jsonify
+from flask import jsonify
 from models import db   # importing the db object from models.py
 
 app = Flask(__name__)
