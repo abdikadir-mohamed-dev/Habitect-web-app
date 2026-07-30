@@ -1,4 +1,5 @@
 import { propertyTypes } from "../data/properties";
+import { link } from "react-router-dom";
 
 const bedroomOptions = ["Any", "1+", "2+", "3+", "4+"];
 
@@ -97,6 +98,10 @@ export default function FilterSidebar({ filters, onChange, onReset, resultCount 
       </div>
 
       <p className="pt-2 border-t border-line text-[13px] text-ink-soft">{resultCount} properties found</p>
+         <Link to="/saved-properties" className="w-full bg-orange-500 text-white text-center py-3 rounded-lg hover:bg-orange-600 transition">
+           Saved Properties
+          </Link>
+
     </aside>
   );
 }
