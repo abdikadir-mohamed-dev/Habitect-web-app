@@ -1,4 +1,5 @@
-import Button from "../components/Button";
+
+import { Link } from "react-router-dom";
 import {
   FaHome,
   FaUsers,
@@ -247,7 +248,11 @@ const About = () => {
             Browse hundreds of premium properties across Kenya.
           </p>
 
-          <Button>Explore Properties</Button>
+          <Link to="/properties" className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600">
+
+         Explore Properties
+
+           </Link>
 
         </div>
 

@@ -24,9 +24,9 @@ const AdminSidebar = () => {
           Manage Users
         </Link>
 
-        <Link to="/admin/properties/update" className="block hover:text-orange-400">
-          Update Property
-        </Link>
+        <Link to="/admin/properties/edit/hb-001" className="block hover:text-orange-400">
+        Update Property
+         </Link>
 
         <button
 
