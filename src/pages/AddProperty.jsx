@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
 import { useProperties } from "../context/PropertiesContext";
 
@@ -30,40 +31,33 @@ const AddProperty = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const newProperty = {
+    addProperty({
       id: `hb-${Date.now()}`,
       title: form.title,
       city: form.city,
       state: form.state,
       price: Number(form.price),
       type: form.type,
+      status: form.status,
       beds: Number(form.beds),
       baths: Number(form.baths),
       sqft: Number(form.sqft),
       description: form.description,
-      status: "For Sale",
       featured: false,
       images: [
         form.image ||
           "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
       ],
-    };
-
-    addProperty(newProperty);
-
-   
+    });
 
     navigate("/admin/properties");
   };
 
-export default function AddProperty() {
   return (
-    <div className="flex h-screen w-screen bg-slate-100 overflow-hidden">
-      {/* Sidebar now sits naturally on the left */}
+    <div className="flex min-h-screen bg-slate-100">
       <AdminSidebar />
 
-      <div className="flex-1 p-8">
-
+      <div className="flex-1 ml-64 p-8">
         <h1 className="text-3xl font-bold mb-8">
           Add Property
         </h1>
@@ -72,41 +66,46 @@ export default function AddProperty() {
           onSubmit={handleSubmit}
           className="bg-white p-8 rounded-xl shadow grid md:grid-cols-2 gap-5"
         >
-
           <input
             name="title"
+            value={form.title}
+            onChange={handleChange}
             placeholder="Title"
             className="border p-3 rounded"
-            onChange={handleChange}
           />
 
           <input
             name="city"
+            value={form.city}
+            onChange={handleChange}
             placeholder="City"
             className="border p-3 rounded"
-            onChange={handleChange}
           />
 
           <input
             name="state"
+            value={form.state}
+            onChange={handleChange}
             placeholder="State"
             className="border p-3 rounded"
-            onChange={handleChange}
           />
 
           <input
             name="price"
+            value={form.price}
+            onChange={handleChange}
             placeholder="Price"
             className="border p-3 rounded"
-            onChange={handleChange}
           />
 
           <input
             name="type"
+            value={form.type}
+            onChange={handleChange}
             placeholder="Property Type"
             className="border p-3 rounded"
-            onChange={handleChange}
           />
+
           <select
             name="status"
             value={form.status}
@@ -119,50 +118,55 @@ export default function AddProperty() {
 
           <input
             name="beds"
+            value={form.beds}
+            onChange={handleChange}
             placeholder="Bedrooms"
             className="border p-3 rounded"
-            onChange={handleChange}
           />
 
           <input
             name="baths"
+            value={form.baths}
+            onChange={handleChange}
             placeholder="Bathrooms"
             className="border p-3 rounded"
-            onChange={handleChange}
           />
 
           <input
             name="sqft"
+            value={form.sqft}
+            onChange={handleChange}
             placeholder="Area (sq ft)"
             className="border p-3 rounded"
-            onChange={handleChange}
           />
 
           <input
             name="image"
+            value={form.image}
+            onChange={handleChange}
             placeholder="Image URL"
             className="border p-3 rounded md:col-span-2"
-            onChange={handleChange}
           />
 
           <textarea
             name="description"
-            rows="5"
+            value={form.description}
+            onChange={handleChange}
+            rows={5}
             placeholder="Description"
             className="border p-3 rounded md:col-span-2"
-            onChange={handleChange}
           />
 
           <button
             type="submit"
-            className="bg-orange-500 text-white py-3 rounded md:col-span-2"
+            className="bg-orange-500 hover:bg-orange-600 text-white py-3 rounded md:col-span-2"
           >
             Save Property
           </button>
-
         </form>
-
       </div>
     </div>
   );
-}
+};
+
+export default AddProperty;
