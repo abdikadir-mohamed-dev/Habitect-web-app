@@ -8,8 +8,10 @@ from extensions import (
     ma,
     cors,
 )
+import models
 
 from routes.property_routes import property_bp
+
 
 
 def create_app():
@@ -25,6 +27,9 @@ def create_app():
 
     # Register Blueprints
     app.register_blueprint(property_bp)
+
+    with app.app_context():
+        db.create_all()
 
     return app
 

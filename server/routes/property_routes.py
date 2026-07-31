@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from extensions import db
 from models.property import Property
@@ -8,12 +7,18 @@ from schemas.property_schema import property_schema, properties_schema
 property_bp = Blueprint("property_bp", __name__)
 
 
+# ----------------------------
+# GET ALL PROPERTIES
+# ----------------------------
 @property_bp.route("/properties", methods=["GET"])
 def get_properties():
     properties = Property.query.all()
     return jsonify(properties_schema.dump(properties)), 200
 
 
+# ----------------------------
+# GET ONE PROPERTY
+# ----------------------------
 @property_bp.route("/properties/<int:property_id>", methods=["GET"])
 def get_property(property_id):
     property_obj = Property.query.get(property_id)
@@ -24,26 +29,22 @@ def get_property(property_id):
     return jsonify(property_schema.dump(property_obj)), 200
 
 
+# ----------------------------
+# CREATE PROPERTY
+# ----------------------------
 @property_bp.route("/properties", methods=["POST"])
-@jwt_required()
 def create_property():
     data = request.get_json()
 
-    errors = property_schema.validate(data)
-    if errors:
-        return jsonify(errors), 400
-
-    current_user_id = get_jwt_identity()
-
     new_property = Property(
-        title=data["title"],
-        description=data["description"],
-        price=data["price"],
-        location=data["location"],
-        bedrooms=data["bedrooms"],
-        bathrooms=data["bathrooms"],
-        image_url=data.get("image_url"),
-        owner_id=current_user_id,
+        title=data.get("title"),
+        description=data.get("description"),
+        price=float(data.get("price", 0)),
+        location=f"{data.get('city', '')} {data.get('state', '')}".strip(),
+        bedrooms=int(data.get("beds", 0)),
+        bathrooms=int(data.get("baths", 0)),
+        image_url=data.get("image"),
+        owner_id=1
     )
 
     db.session.add(new_property)
@@ -52,8 +53,10 @@ def create_property():
     return jsonify(property_schema.dump(new_property)), 201
 
 
+# ----------------------------
+# UPDATE PROPERTY
+# ----------------------------
 @property_bp.route("/properties/<int:property_id>", methods=["PUT"])
-@jwt_required()
 def update_property(property_id):
     property_obj = Property.query.get(property_id)
 
@@ -62,29 +65,23 @@ def update_property(property_id):
 
     data = request.get_json()
 
-    errors = property_schema.validate(data, partial=True)
-    if errors:
-        return jsonify(errors), 400
-
-    for field in [
-        "title",
-        "description",
-        "price",
-        "location",
-        "bedrooms",
-        "bathrooms",
-        "image_url",
-    ]:
-        if field in data:
-            setattr(property_obj, field, data[field])
+    property_obj.title = data.get("title", property_obj.title)
+    property_obj.description = data.get("description", property_obj.description)
+    property_obj.price = float(data.get("price", property_obj.price))
+    property_obj.location = f"{data.get('city','')} {data.get('state','')}".strip()
+    property_obj.bedrooms = int(data.get("beds", property_obj.bedrooms))
+    property_obj.bathrooms = int(data.get("baths", property_obj.bathrooms))
+    property_obj.image_url = data.get("image", property_obj.image_url)
 
     db.session.commit()
 
     return jsonify(property_schema.dump(property_obj)), 200
 
 
+# ----------------------------
+# DELETE PROPERTY
+# ----------------------------
 @property_bp.route("/properties/<int:property_id>", methods=["DELETE"])
-@jwt_required()
 def delete_property(property_id):
     property_obj = Property.query.get(property_id)
 
