@@ -55,7 +55,7 @@ export function FavoritesProvider({ children }) {
       if (isAlreadySaved) {
         const recordToDelete = savedRecords.find((item) => item.property_id === propertyId);
         if (recordToDelete) {
-          await API.delete(`/saved-properties/${recordToDelete.id}`);
+          await API.delete(`/api/saved-properties/${recordToDelete.id}`);
         }
         setFavoriteIds((current) => current.filter((id) => id !== propertyId));
         setSavedRecords((current) => current.filter((item) => item.property_id !== propertyId));

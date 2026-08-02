@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
 from models.saved_property import SavedProperty
 
-saved_properties_bp = Blueprint('saved_properties', __name__, url_prefix='/saved-properties')
+saved_properties_bp = Blueprint("saved_properties", __name__)
 
 @saved_properties_bp.route('', methods=['GET'])
 @jwt_required()

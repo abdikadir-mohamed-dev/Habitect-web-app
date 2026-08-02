@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_cors import CORS  # <-- Import standard flask_cors directly
+from flask_cors import CORS
 from config import Config
 from extensions import (
     db,
@@ -28,16 +28,16 @@ def create_app():
     bcrypt.init_app(app)
     ma.init_app(app)
     
-    # Enable CORS globally to prevent frontend blocked delete/update requests
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    # Enable CORS globally for both localhost and 127.0.0.1
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}}, supports_credentials=True)
 
-    # Register Blueprints
-    app.register_blueprint(property_bp)
-    app.register_blueprint(appointments_bp)
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(users_bp)
-    app.register_blueprint(contact_bp)
-    app.register_blueprint(saved_properties_bp)
+    # Register Blueprints with a common /api prefix
+    app.register_blueprint(property_bp, url_prefix='/api')
+    app.register_blueprint(appointments_bp, url_prefix='/api/appointments')
+    app.register_blueprint(auth_bp, url_prefix='/api')
+    app.register_blueprint(users_bp, url_prefix='/api')
+    app.register_blueprint(contact_bp, url_prefix='/api')
+    app.register_blueprint(saved_properties_bp, url_prefix='/api/saved-properties')
 
     with app.app_context():
         db.create_all()
@@ -47,4 +47,4 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=5555, debug=True)

@@ -4,7 +4,7 @@ import { useProperties } from "../context/PropertiesContext";
 import { getUsers, getAdminAppointments } from "../services/api";
 
 const AdminDashboard = () => {
-  const { properties } = useProperties();
+  const { properties = [] } = useProperties();
   const [users, setUsers] = useState([]);
   const [appointments, setAppointments] = useState([]);
 
@@ -107,7 +107,7 @@ const AdminDashboard = () => {
 
           <ul className="space-y-3">
             {properties
-              .slice(-5)
+              ?.slice(-5)
               .reverse()
               .map((property) => (
                 <li key={property.id} className="text-gray-700">

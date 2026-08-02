@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const PropertiesContext = createContext();
 
-const API = "http://127.0.0.1:5000";
+const API = import.meta.env.VITE_API_URL || "http://localhost:5555";
 
 export function PropertiesProvider({ children }) {
   const [properties, setProperties] = useState([]);
@@ -10,7 +10,7 @@ export function PropertiesProvider({ children }) {
   // Load properties from Flask
   const fetchProperties = async () => {
     try {
-      const res = await fetch(`${API}/properties`);
+      const res = await fetch(`${API}/api/properties`);
       const data = await res.json();
 
       const formatted = data.map((property) => ({
@@ -36,7 +36,7 @@ export function PropertiesProvider({ children }) {
   }, []);
 
   const addProperty = async (property) => {
-    await fetch(`${API}/properties`, {
+    await fetch(`${API}/api/properties`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export function PropertiesProvider({ children }) {
   };
 
   const updateProperty = async (property) => {
-    await fetch(`${API}/properties/${property.id}`, {
+    await fetch(`${API}/api/properties/${property.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export function PropertiesProvider({ children }) {
   };
 
   const deleteProperty = async (id) => {
-    await fetch(`${API}/properties/${id}`, {
+    await fetch(`${API}/api/properties/${id}`, {
       method: "DELETE",
     });
 
