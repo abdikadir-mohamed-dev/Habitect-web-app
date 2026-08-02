@@ -1,47 +1,74 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { properties as initialProperties } from "../data/properties";
 
 const PropertiesContext = createContext();
 
-const STORAGE_KEY = "habitect-properties";
+const API = "http://127.0.0.1:5000";
 
 export function PropertiesProvider({ children }) {
-  const [properties, setProperties] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
+  const [properties, setProperties] = useState([]);
 
-    if (saved) {
-      return JSON.parse(saved);
+  // Load properties from Flask
+  const fetchProperties = async () => {
+    try {
+      const res = await fetch(`${API}/properties`);
+      const data = await res.json();
+
+      const formatted = data.map((property) => ({
+        id: property.id,
+        title: property.title,
+        city: property.location?.split(" ")[0] || "",
+        state: property.location?.split(" ").slice(1).join(" ") || "",
+        price: property.price,
+        beds: property.bedrooms,
+        baths: property.bathrooms,
+        description: property.description,
+        image: property.image_url,
+      }));
+
+      setProperties(formatted);
+    } catch (err) {
+      console.error(err);
     }
-
-    return initialProperties;
-  });
+  };
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
-  }, [properties]);
+    fetchProperties();
+  }, []);
 
-  const addProperty = (property) => {
-    setProperties((prev) => [...prev, property]);
+  const addProperty = async (property) => {
+    await fetch(`${API}/properties`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(property),
+    });
+
+    fetchProperties();
   };
 
-  const updateProperty = (updatedProperty) => {
-    setProperties((prev) =>
-      prev.map((property) =>
-        property.id === updatedProperty.id
-          ? updatedProperty
-          : property
-      )
-    );
+  const updateProperty = async (property) => {
+    await fetch(`${API}/properties/${property.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(property),
+    });
+
+    fetchProperties();
   };
 
-  const deleteProperty = (id) => {
-    setProperties((prev) =>
-      prev.filter((property) => property.id !== id)
-    );
+  const deleteProperty = async (id) => {
+    await fetch(`${API}/properties/${id}`, {
+      method: "DELETE",
+    });
+
+    fetchProperties();
   };
 
   const getProperty = (id) => {
-    return properties.find((property) => property.id === id);
+    return properties.find((property) => String(property.id) === String(id));
   };
 
   return (

@@ -1,17 +1,37 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { loginUser } from '../services/api';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const response = await loginUser({ 
+        email: email.trim().toLowerCase(), 
+        password 
+      });
+      
+      localStorage.setItem("access_token", response.data.access_token);
+      
+      // Normalize user data so 'name' is guaranteed to exist for the dashboard & profile
+      const userData = {
+        ...response.data.user,
+        name: response.data.user?.name || response.data.user?.username || "Martin"
+      };
+      localStorage.setItem("loggedUser", JSON.stringify(userData));
 
-    // we will replace with a real fetch() call once the Flask backend is wired up
-    if (email && password) {
-      navigate('/dashboard');
+      // Route based on role
+      if (userData.role === "admin" || userData.role === "Admin") {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      alert(err.response?.data?.error || "Invalid email or password!");
     }
   };
 
@@ -49,19 +69,8 @@ export default function LoginForm() {
         </button>
       </form>
 
-      {/* Admin Link Prompt */}
-      <div className="text-center mt-6 text-sm text-slate-600">
-        <span>Are you an administrator? </span>
-        <Link 
-          to="/admin/dashboard" 
-          className="font-bold text-amber-600 hover:text-amber-700 hover:underline transition"
-        >
-          Log in as Admin?
-        </Link>
-      </div>
-
       {/* Registration Link */}
-      <div className="text-center text-sm text-slate-500 mt-3">
+      <div className="text-center text-sm text-slate-500 mt-4">
         Don't have an account?{' '}
         <Link to="/register" className="font-semibold text-slate-900 hover:underline">
           Register Here

@@ -40,7 +40,9 @@ def save_property():
 @saved_properties_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 def remove_saved_property(id):
-    saved = SavedProperty.query.get_or_404(id)
+    current_user_id = get_jwt_identity()
+    saved = SavedProperty.query.filter_by(id=id, user_id=current_user_id).first_or_404()
+    
     db.session.delete(saved)
     db.session.commit()
     return jsonify({'message': 'Removed from saved properties'}), 200

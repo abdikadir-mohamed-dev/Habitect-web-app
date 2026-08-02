@@ -17,8 +17,8 @@ const CTA = () => {
 
         <div className="mt-8">
           <button
-            onClick={() => navigate("/choose-role")}
-            className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-black transition"
+            onClick={() => navigate("/login")}
+            className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-black transition font-semibold"
           >
             Get Started
           </button>

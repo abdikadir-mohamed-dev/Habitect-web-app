@@ -15,4 +15,5 @@ bcrypt = Bcrypt()
 
 ma = Marshmallow()
 
-cors = CORS()                                                                                                                                                                                                                       
+# Update this line to support credentials properly
+cors = CORS(supports_credentials=True)                                                                                                                                                                                                         

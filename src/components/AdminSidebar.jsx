@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 
 const AdminSidebar = () => {
   return (
-    <div className="fixed top-0 left-0 h-screen w-64 bg-gray-900 text-white p-6 overflow-y-auto flex flex-col">
+    <div className="h-screen w-64 flex-shrink-0 bg-gray-900 text-white p-6 overflow-y-auto">
       <h1 className="text-2xl font-bold text-orange-500 mb-8">
         HABITECT
       </h1>
-
-      <nav className="space-y-4 flex-1">
+      
+      <nav className="space-y-4">
         <Link to="/admin/dashboard" className="block hover:text-orange-400">
           Dashboard
         </Link>
@@ -24,23 +24,20 @@ const AdminSidebar = () => {
           Manage Users
         </Link>
 
-        <Link
-          to="/admin/properties/edit/hb-001"
-          className="block hover:text-orange-400"
-        >
+        <Link to="/admin/properties/edit/hb-001" className="block hover:text-orange-400">
           Update Property
         </Link>
-      </nav>
 
-      <button
-        onClick={() => {
-          localStorage.removeItem("token");
-          window.location.href = "/";
-        }}
-        className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded transition"
-      >
-        Logout
-      </button>
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            window.location.href = "/";
+          }}
+          className="w-full text-left px-4 py-2 mt-8 bg-red-600 hover:bg-red-700 rounded transition"
+        >
+          Logout
+        </button>
+      </nav>
     </div>
   );
 };

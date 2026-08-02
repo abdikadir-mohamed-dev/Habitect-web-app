@@ -1,322 +1,158 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useProperties } from "../context/PropertiesContext";
 import { useFavorites } from "../context/FavoritesContext";
-
 import PropertyGrid from "../components/PropertyGrid";
 import AppointmentCard from "../components/AppointmentCard";
+import API from "../services/api";
 
 export default function UserDashboard() {
   const navigate = useNavigate();
-
   const { properties } = useProperties();
   const { favoriteIds } = useFavorites();
 
-  // Logged in user
   const loggedUser = JSON.parse(localStorage.getItem("loggedUser")) || {
-    name: "Guest User",
-    email: "guest@example.com",
-    phone: "Not provided",
-    memberSince: new Date().toLocaleDateString(),
+    name: "User",
+    email: "user@example.com",
+    phone: "+254 700 000000",
+    memberSince: "2026",
   };
 
   const [activeTab, setActiveTab] = useState("overview");
+  const [appointments, setAppointments] = useState([]);
 
-  const [appointments, setAppointments] = useState(() => {
-    return JSON.parse(localStorage.getItem("appointments")) || [];
-  });
+  // Fetch appointments from the secure backend database endpoint whenever activeTab changes
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
 
-  const handleCancelAppointment = (id) => {
-    
-      const updatedAppointments = appointments.filter(
-        (appointment) => appointment.id !== id
-      );
+      try {
+        const response = await API.get("/appointments");
+        setAppointments(response.data);
+      } catch (error) {
+        console.error("Failed to fetch appointments from backend", error);
+      }
+    };
 
-      setAppointments(updatedAppointments);
+    fetchAppointments();
+  }, [activeTab]);
 
-      localStorage.setItem(
-        "appointments",
-        JSON.stringify(updatedAppointments)
-      );
-    
+  const handleCancelAppointment = async (id) => {
+    try {
+      await API.delete(`/appointments/${id}`);
+      setAppointments((prev) => prev.filter((app) => app.id !== id));
+    } catch (error) {
+      console.error("Failed to cancel appointment", error);
+      alert("Could not cancel appointment. Please try again.");
+    }
   };
 
   const handleLogout = () => {
     localStorage.removeItem("loggedUser");
-    navigate("/");
+    localStorage.removeItem("access_token");
+    // Force a full reload to clear all React state and context cache across user sessions
+    window.location.href = "/";
   };
 
-  const savedProperties = properties.filter((property) =>
-    favoriteIds.includes(property.id)
-  );
+  const savedProperties = properties.filter((property) => favoriteIds.includes(property.id));
 
   return (
-    <div className="min-h-screen flex bg-slate-100">
-
-      {/* Sidebar */}
-
-      <aside className="w-64 bg-slate-950 text-white flex flex-col justify-between p-6">
-
+    <div className="min-h-screen flex bg-slate-100 relative">
+      <aside className="fixed inset-y-0 left-0 z-50 w-64 h-screen bg-slate-950 text-white flex flex-col justify-between p-6">
         <div>
-
-          <h1 className="text-3xl font-bold mb-10">
+          <h1 
+            onClick={() => navigate("/")} 
+            className="text-3xl font-bold mb-10 cursor-pointer hover:text-orange-500 transition"
+          >
             HABITECT
           </h1>
-
           <div className="space-y-2">
-
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`w-full text-left p-3 rounded-lg ${
-                activeTab === "overview"
-                  ? "bg-orange-500"
-                  : "hover:bg-slate-800"
-              }`}
-            >
-              Dashboard
-            </button>
-
-            <button
-              onClick={() => setActiveTab("properties")}
-              className={`w-full text-left p-3 rounded-lg ${
-                activeTab === "properties"
-                  ? "bg-orange-500"
-                  : "hover:bg-slate-800"
-              }`}
-            >
-              Explore Properties
-            </button>
-
-            <button
-              onClick={() => setActiveTab("saved")}
-              className={`w-full text-left p-3 rounded-lg ${
-                activeTab === "saved"
-                  ? "bg-orange-500"
-                  : "hover:bg-slate-800"
-              }`}
-            >
-              Saved Properties
-            </button>
-
-            <button
-              onClick={() => setActiveTab("appointments")}
-              className={`w-full text-left p-3 rounded-lg ${
-                activeTab === "appointments"
-                  ? "bg-orange-500"
-                  : "hover:bg-slate-800"
-              }`}
-            >
-              My Appointments
-            </button>
-
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`w-full text-left p-3 rounded-lg ${
-                activeTab === "profile"
-                  ? "bg-orange-500"
-                  : "hover:bg-slate-800"
-              }`}
-            >
-              Profile
-            </button>
-
+            {["overview", "properties", "saved", "appointments", "profile"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`w-full text-left p-3 rounded-lg capitalize ${
+                  activeTab === tab ? "bg-orange-500 font-bold" : "hover:bg-slate-800"
+                }`}
+              >
+                {tab === "overview" ? "Dashboard" : tab === "saved" ? "Saved Properties" : tab}
+              </button>
+            ))}
           </div>
-
         </div>
-
-        {/* Logout always stays pinned at the bottom */}
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-700 rounded-lg py-3 font-semibold transition"
-        >
+        <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 rounded-lg py-3 font-semibold transition">
           Logout
         </button>
-
       </aside>
 
-      {/* Main Content */}
-
-      <main className="flex-1 p-10">
-        {/* Dashboard */}
+      <main className="flex-1 ml-64 p-10 min-h-screen overflow-y-auto">
         {activeTab === "overview" && (
-          <>
-            <h1 className="text-3xl font-bold">
-              Welcome back, {loggedUser.name}
-            </h1>
-
-            <p className="text-slate-500 mt-2">
-              Here's a summary of your account.
-            </p>
-
+          <div>
+            <h1 className="text-3xl font-bold">Welcome back, {loggedUser.name}</h1>
+            <p className="text-slate-500 mt-2">Here's a summary of your real estate activity.</p>
             <div className="grid md:grid-cols-3 gap-6 mt-8">
-
               <div className="bg-white rounded-xl shadow p-6">
                 <h3 className="text-slate-500">Available Properties</h3>
-                <p className="text-4xl font-bold mt-3">
-                  {properties.length}
-                </p>
+                <p className="text-4xl font-bold mt-3">{properties.length}</p>
               </div>
-
               <div className="bg-white rounded-xl shadow p-6">
                 <h3 className="text-slate-500">Saved Properties</h3>
-                <p className="text-4xl font-bold mt-3">
-                  {savedProperties.length}
-                </p>
+                <p className="text-4xl font-bold mt-3">{savedProperties.length}</p>
               </div>
-
               <div className="bg-white rounded-xl shadow p-6">
                 <h3 className="text-slate-500">Appointments</h3>
-                <p className="text-4xl font-bold mt-3">
-                  {appointments.length}
-                </p>
+                <p className="text-4xl font-bold mt-3">{appointments.length}</p>
               </div>
-
             </div>
-          </>
+          </div>
         )}
 
-        {/* Explore Properties */}
-        {activeTab === "properties" && (
-          <>
-            <div className="flex justify-between items-center mb-8">
-              <h1 className="text-3xl font-bold">
-                Explore Properties
-              </h1>
+        {activeTab === "properties" && <PropertyGrid properties={properties} />}
+        {activeTab === "saved" && <PropertyGrid properties={savedProperties} />}
 
-              <span className="text-slate-500">
-                {properties.length} Properties
-              </span>
-            </div>
-
-            <PropertyGrid properties={properties} />
-          </>
-        )}
-
-        {/* Saved Properties */}
-        {activeTab === "saved" && (
-          <>
-            <div className="flex justify-between items-center mb-8">
-              <h1 className="text-3xl font-bold">
-                Saved Properties
-              </h1>
-
-              <span className="text-slate-500">
-                {savedProperties.length} Saved
-              </span>
-            </div>
-
-            {savedProperties.length > 0 ? (
-              <PropertyGrid properties={savedProperties} />
-            ) : (
-              <div className="bg-white rounded-xl shadow p-10 text-center">
-                <h2 className="text-2xl font-semibold">
-                  No Saved Properties
-                </h2>
-
-                <p className="text-slate-500 mt-3">
-                  Click the ❤️ icon on any property to save it.
-                </p>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Appointments */}
         {activeTab === "appointments" && (
-          <>
-            <h1 className="text-3xl font-bold mb-8">
-              My Appointments
-            </h1>
-
+          <div>
+            <h1 className="text-3xl font-bold mb-8">My Appointments</h1>
             {appointments.length > 0 ? (
               <div className="space-y-5">
                 {appointments.map((appointment) => (
-                  <AppointmentCard
-                    key={appointment.id}
-                    appointment={appointment}
-                    onCancel={handleCancelAppointment}
-                  />
+                  <AppointmentCard key={appointment.id} appointment={appointment} onCancel={handleCancelAppointment} />
                 ))}
               </div>
             ) : (
               <div className="bg-white rounded-xl shadow p-10 text-center">
-                <h2 className="text-2xl font-semibold">
-                  No Appointments
-                </h2>
-
-                <p className="text-slate-500 mt-3">
-                  Book a property viewing to see your appointments here.
-                </p>
+                <h2 className="text-2xl font-semibold">No Appointments</h2>
+                <p className="text-slate-500 mt-3">Book a property viewing to see your appointments here.</p>
               </div>
             )}
-          </>
-        )}
-
-        {/* Profile */}
-        {activeTab === "profile" && (
-          <div className="bg-white rounded-xl shadow p-8 max-w-2xl">
-
-            <h1 className="text-3xl font-bold mb-8">
-              My Profile
-            </h1>
-
-            <div className="space-y-5">
-
-              <div>
-                <label className="font-semibold block mb-2">
-                  Full Name
-                </label>
-
-                <input
-                  value={loggedUser.name}
-                  readOnly
-                  className="w-full border rounded-lg p-3 bg-slate-50"
-                />
-              </div>
-
-              <div>
-                <label className="font-semibold block mb-2">
-                  Email Address
-                </label>
-
-                <input
-                  value={loggedUser.email}
-                  readOnly
-                  className="w-full border rounded-lg p-3 bg-slate-50"
-                />
-              </div>
-
-              <div>
-                <label className="font-semibold block mb-2">
-                  Phone Number
-                </label>
-
-                <input
-                  value={loggedUser.phone || "Not Added"}
-                  readOnly
-                  className="w-full border rounded-lg p-3 bg-slate-50"
-                />
-              </div>
-
-              <div>
-                <label className="font-semibold block mb-2">
-                  Member Since
-                </label>
-
-                <input
-                  value={loggedUser.memberSince || "New Member"}
-                  readOnly
-                  className="w-full border rounded-lg p-3 bg-slate-50"
-                />
-              </div>
-
-            </div>
           </div>
         )}
 
+        {activeTab === "profile" && (
+          <div className="bg-white rounded-xl shadow p-8 max-w-2xl">
+            <h1 className="text-3xl font-bold mb-8">My Profile</h1>
+            <div className="space-y-5">
+              <div>
+                <label className="font-semibold block mb-2 text-sm text-slate-600">Full Name</label>
+                <input value={loggedUser.name} readOnly className="w-full border rounded-lg p-3 bg-slate-50 text-slate-800" />
+              </div>
+              <div>
+                <label className="font-semibold block mb-2 text-sm text-slate-600">Email Address</label>
+                <input value={loggedUser.email} readOnly className="w-full border rounded-lg p-3 bg-slate-50 text-slate-800" />
+              </div>
+              <div>
+                <label className="font-semibold block mb-2 text-sm text-slate-600">Phone Number</label>
+                <input value={loggedUser.phone} readOnly className="w-full border rounded-lg p-3 bg-slate-50 text-slate-800" />
+              </div>
+              <div>
+                <label className="font-semibold block mb-2 text-sm text-slate-600">Member Since</label>
+                <input value={loggedUser.memberSince || "2026"} readOnly className="w-full border rounded-lg p-3 bg-slate-50 text-slate-800" />
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
 }
-      

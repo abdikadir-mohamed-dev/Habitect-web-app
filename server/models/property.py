@@ -17,5 +17,19 @@ class Property(db.Model):
 
     owner = db.relationship("User", backref="properties")
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'price': self.price,
+            'location': self.location,
+            'bedrooms': self.bedrooms,
+            'bathrooms': self.bathrooms,
+            'image_url': self.image_url,
+            'owner_id': self.owner_id,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
     def __repr__(self):
         return f"<Property {self.title}>"

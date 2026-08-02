@@ -11,12 +11,14 @@ auth_bp = Blueprint("auth", __name__)
 def register():
     data = request.get_json()
 
-    username = data.get("username")
+    # Match frontend keys: name, email, password, phone
+    username = data.get("name") or data.get("username")
     email = data.get("email")
     password = data.get("password")
+    phone = data.get("phone")
 
     if not username or not email or not password:
-        return jsonify({"error": "All fields are required"}), 400
+        return jsonify({"error": "Name, email, and password are required"}), 400
 
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "Email already exists"}), 400
@@ -26,10 +28,10 @@ def register():
 
     user = User(
         username=username,
-        email=email
+        email=email,
+        phone=phone  # Make sure your User model has a phone column
     )
 
-    # Hash and save the password
     user.set_password(password)
 
     db.session.add(user)

@@ -1,5 +1,5 @@
+from models import Appointment, SavedProperty 
 from flask import Blueprint, request, jsonify
-
 from extensions import db
 from models.property import Property
 from schemas.property_schema import property_schema, properties_schema
@@ -40,10 +40,10 @@ def create_property():
         title=data.get("title"),
         description=data.get("description"),
         price=float(data.get("price", 0)),
-        location=f"{data.get('city', '')} {data.get('state', '')}".strip(),
-        bedrooms=int(data.get("beds", 0)),
-        bathrooms=int(data.get("baths", 0)),
-        image_url=data.get("image"),
+        location=data.get("location", ""),          # Fixed to match React form
+        bedrooms=int(data.get("bedrooms", 0)),      # Fixed to match React form
+        bathrooms=int(data.get("bathrooms", 0)),    # Fixed to match React form
+        image_url=data.get("image_url") or data.get("image"), # Supports both keys
         owner_id=1
     )
 
@@ -68,10 +68,10 @@ def update_property(property_id):
     property_obj.title = data.get("title", property_obj.title)
     property_obj.description = data.get("description", property_obj.description)
     property_obj.price = float(data.get("price", property_obj.price))
-    property_obj.location = f"{data.get('city','')} {data.get('state','')}".strip()
-    property_obj.bedrooms = int(data.get("beds", property_obj.bedrooms))
-    property_obj.bathrooms = int(data.get("baths", property_obj.bathrooms))
-    property_obj.image_url = data.get("image", property_obj.image_url)
+    property_obj.location = data.get("location", property_obj.location)       # Fixed
+    property_obj.bedrooms = int(data.get("bedrooms", property_obj.bedrooms)) # Fixed
+    property_obj.bathrooms = int(data.get("bathrooms", property_obj.bathrooms)) # Fixed
+    property_obj.image_url = data.get("image_url", data.get("image", property_obj.image_url))
 
     db.session.commit()
 
@@ -81,14 +81,17 @@ def update_property(property_id):
 # ----------------------------
 # DELETE PROPERTY
 # ----------------------------
-@property_bp.route("/properties/<int:property_id>", methods=["DELETE"])
-def delete_property(property_id):
-    property_obj = Property.query.get(property_id)
+@property_bp.route('/properties/<int:id>', methods=['DELETE'])
+def delete_property(id):
+    property_item = Property.query.get_or_404(id)
+    try:
+        Appointment.query.filter_by(property_id=id).delete()
+        SavedProperty.query.filter_by(property_id=id).delete()
 
-    if not property_obj:
-        return jsonify({"error": "Property not found"}), 404
-
-    db.session.delete(property_obj)
-    db.session.commit()
-
-    return jsonify({"message": "Property deleted"}), 200
+        db.session.delete(property_item)
+        db.session.commit()
+        return {"message": "Property deleted successfully"}, 200
+    except Exception as e:
+        db.session.rollback()
+        print("CRITICAL DELETE ERROR:", str(e))
+        return {"error": str(e)}, 500

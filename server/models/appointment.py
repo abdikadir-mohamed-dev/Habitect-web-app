@@ -20,7 +20,9 @@ class Appointment(db.Model):
         return {
             'id': self.id,
             'user_id': self.user_id,
+            'client_name': self.user.username if self.user else f"User ID: {self.user_id}",
             'property_id': self.property_id,
+            'property_title': self.property.title if self.property else f"Property ID: {self.property_id}",
             'date': self.date,
             'time': self.time,
             'status': self.status,

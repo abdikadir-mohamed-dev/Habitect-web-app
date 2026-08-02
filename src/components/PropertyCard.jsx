@@ -3,7 +3,10 @@ import FavoriteButton from "./FavoriteButton";
 import { formatPrice } from "../data/properties";
 
 export default function PropertyCard({ property }) {
-  const { id, title, images, city, state, beds, baths, sqft, status } = property;
+  const { id, title, images, image, city, state, beds, baths, sqft, status } = property;
+
+  // Safely grab the first image from array, fallback to single image string, or use default placeholder
+  const propertyImage = images?.[0] || image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00";
 
   return (
     <Link
@@ -11,7 +14,7 @@ export default function PropertyCard({ property }) {
       className="block bg-panel rounded-lg2 overflow-hidden shadow-card border border-line transition-transform duration-200 hover:-translate-y-1 hover:shadow-card-hover"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-panel-muted">
-        <img src={images[0]} alt={title} loading="lazy" className="w-full h-full object-cover" />
+        <img src={propertyImage} alt={title} loading="lazy" className="w-full h-full object-cover" />
         <span className="absolute top-3 left-3 bg-bg/80 text-gold-tint text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full">
           {status}
         </span>
@@ -31,7 +34,7 @@ export default function PropertyCard({ property }) {
           <span aria-hidden="true">·</span>
           <span>{baths} ba</span>
           <span aria-hidden="true">·</span>
-          <span>{sqft.toLocaleString()} sqft</span>
+          <span>{sqft ? sqft.toLocaleString() : "N/A"} sqft</span>
         </div>
       </div>
     </Link>

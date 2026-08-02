@@ -7,11 +7,11 @@ export default function AdminProperties() {
   const { properties = [], deleteProperty } = useProperties() || {};
 
   return (
-    <div className="flex bg-gray-100 min-h-screen w-full overflow-hidden">
+    <div className="flex bg-gray-100 min-h-screen w-screen overflow-hidden">
       <AdminSidebar />
 
-      {/* Main Content with Margin Offset and Layout Bound */}
-      <div className="ml-64 flex-1 min-w-0 p-8 h-screen overflow-y-auto">
+      {/* Main Content Area */}
+      <div className="flex-1 min-w-0 p-8 h-screen overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Manage Properties</h1>
 
@@ -35,7 +35,6 @@ export default function AdminProperties() {
                 <th className="p-4 text-center">Actions</th>
               </tr>
             </thead>
-
             <tbody>
               {properties && properties.length > 0 ? (
                 properties.map((property) => (
@@ -45,7 +44,7 @@ export default function AdminProperties() {
                   >
                     <td className="p-4 font-semibold">{property.title}</td>
                     <td className="p-4 text-slate-600">
-                      {property.location}, {property.state}
+                      {property.location}
                     </td>
                     <td className="p-4 font-bold text-slate-900">
                       ${property.price}
