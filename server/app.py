@@ -35,10 +35,10 @@ def create_app():
         "origins": [
             "http://localhost:5173", 
             "http://127.0.0.1:5173",
-            r"https://habitect-web-app-.*\.vercel\.app"
+            r"https://habitect-web-pbb6325yc-abdikadir-mohamed-devs-projects.vercel.app"
         ]
     }
- }, supports_credentials=True)
+    }, supports_credentials=True)
     # Register Blueprints with a common /api prefix
     app.register_blueprint(property_bp, url_prefix='/api')
     app.register_blueprint(appointments_bp, url_prefix='/api/appointments')
