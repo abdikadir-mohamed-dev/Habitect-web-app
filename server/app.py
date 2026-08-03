@@ -28,8 +28,17 @@ def create_app():
     bcrypt.init_app(app)
     ma.init_app(app)
     
-    # Enable CORS globally for both localhost and 127.0.0.1
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}}, supports_credentials=True)
+    # Enable CORS for localhost and your live Vercel frontend deployment
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:5173", 
+                "http://127.0.0.1:5173",
+                "https://habitect-web-app-o1b83ou3c-abdikadir-mohamed-devs-projects.vercel.app",
+                "https://habitect-web-app-pi.vercel.app"
+            ]
+        }
+    }, supports_credentials=True)
 
     # Register Blueprints with a common /api prefix
     app.register_blueprint(property_bp, url_prefix='/api')
