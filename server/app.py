@@ -30,15 +30,10 @@ def create_app():
     
     # Enable CORS for localhost and your live Vercel frontend deployment
    # Enable CORS for localhost and all Vercel preview/production deployments
-    CORS(app, resources={
-    r"/api/*": {
-        "origins": [
-            "http://localhost:5173", 
-            "http://127.0.0.1:5173",
-            "https://habitect-web-pbb6325yc-abdikadir-mohamed-devs-projects.vercel.app"
-        ]
-    }
-    }, supports_credentials=True)
+    CORS(
+    app,
+    resources={r"/api/*": {"origins": "*"}}
+)
     # Register Blueprints with a common /api prefix
     app.register_blueprint(property_bp, url_prefix='/api')
     app.register_blueprint(appointments_bp, url_prefix='/api/appointments')
